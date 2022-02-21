@@ -70,14 +70,12 @@ static double igf(double S, double Z) {
 	Sc *= pow(Z, S);
 	Sc *= exp(-Z);
 
-	double Sum, Nom, Denom;
-	Sum = Nom = Denom = 1.0;
+	double dSum, Sum, Nom, Denom;
+	dSum = Sum = Nom = Denom = 1.0;
 
 	for (int I = 0; I < 200; I++) {
-		Nom *= Z;
-		S++;
-		Denom *= S;
-		Sum += (Nom / Denom);
+	  dSum *= (Z/++S) ;
+	  Sum += dSum ;
 	}
 
 	return Sum * Sc;
@@ -93,10 +91,10 @@ double chisqr(int Dof, double Cv) {
 		return exp(-1.0 * X);
 	}
 	double PValue = igf(K, X);
-	if (std::isnan(PValue) || std::isinf(PValue) || PValue <= 1e-8) {
+	if (std::isnan(PValue) || std::isinf(PValue) || PValue <= 1e-14) {
 		return 1e-14;
 	}
-	PValue /= approx_gamma(K);
+	PValue /= tgamma(K);
 
 	return (1.0 - PValue);
 }
